@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Typing Speed Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background: #f5f5f5;
+        }
+
+        #quote-box {
+            margin: 20px auto;
+            width: 60%;
+            padding: 20px;
+            background-color: #e6f7ff;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+
+        #input-box {
+            width: 60%;
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+
+        #stats {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+
+        #restart {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Typing Speed Tester 🚀</h1>
+
+    <div id="quote-box">
+        <p id="quote"></p>
+    </div>
+
+    <textarea id="input-box" rows="5" placeholder="Start typing here..."></textarea>
+
+    <div id="stats">
+        <p id="wpm">WPM: 0</p>
+        <p id="accuracy">Accuracy: 100%</p>
+    </div>
+
+    <button id="restart">Restart</button>
+
+    <script>
+        const quotes = [
+  "The quick brown fox jumps over the lazy dog",
+  "Practice makes perfect in every skill",
+  "JavaScript is fun and powerful",
+  "Typing speed improves with daily practice",
+  "Stay consistent and success will follow",
+  // Inspirational quotes from well-known sources:
+  "But man is not made for defeat. A man can be destroyed but not defeated. – Ernest Hemingway",
+  "When you reach the end of your rope, tie a knot in it and hang on. – Franklin D. Roosevelt",
+  "There is nothing permanent except change. – Heraclitus",
+  "Let us sacrifice our today so that our children can have a better tomorrow. – A. P. J. Abdul Kalam",
+  "Whatever you do, don't wake up at 65 years old and think about what you should have done. – George Clooney",
+  "Start where you are. Use what you have. Do what you can. – Arthur Ashe",
+  "I’m a great believer in luck, and I find the harder I work, the more I have of it. – Thomas Jefferson",
+  "Challenges are what make life interesting and overcoming them is what makes life meaningful. – Joshua J. Marine",
+  "Alone we can do so little. Together we can do so much. – Helen Keller",
+  "If everyone is moving forward together, success takes care of itself. – Henry Ford",
+  "What is coming is better than what is gone. – Unknown",
+  "Attitude is a choice. Happiness is a choice. Whatever you choose makes you. Choose wisely. – Roy T. Bennett",
+  "Dwell on the beauty of life. Watch the stars, and see yourself running with them. – Marcus Aurelius",
+  "Do something today that your future self will thank you for. – Unknown",
+  "Live as if you were to die tomorrow. Learn as if you were to live forever. – Mahatma Gandhi",
+  "Education is the most powerful weapon you can use to change the world. – Nelson Mandela",
+  "You miss 100% of the shots you don't take. – Wayne Gretzky",
+  "You will face many defeats in life, but never let yourself be defeated. – Maya Angelou",
+  "The future belongs to those who believe in the beauty of their dreams. – Eleanor Roosevelt",
+  "Take the time to enjoy the little things, for one day you may look back... – Robert Brault",
+  "Success is stumbling from failure to failure with no loss of enthusiasm. – Winston Churchill",
+  "Everything you can imagine is real. – Pablo Picasso",
+  "The secret of getting ahead is getting started. – Mark Twain",
+  "Everything you want is on the other side of fear. – George Addair",
+  "Be who you are and say what you feel… – Bernard M. Baruch",
+  "You’ve gotta dance like there's nobody watching… – William W. Purkey",
+  "Failure will never overtake me if my determination to succeed is strong enough. – Og Mandino",
+  "Things work out best for those who make the best of how things work out. – John Wooden",
+  "Every moment is a fresh beginning. – T.S. Eliot",
+  "Real change, enduring change, happens one step at a time. – Ruth Bader Ginsburg",
+  "Don’t count the days. Make the days count. – Muhammad Ali",
+  "It takes nothing to join the crowd. It takes everything to stand alone. – Hans F. Hansen",
+  "You are the one that possesses the keys to your being... – Diane Von Furstenberg",
+  "Winning means you’re willing to go longer, work harder, and give more than anyone else. – Vince Lombardi",
+  "A winner is a dreamer who never gives up. – Nelson Mandela",
+  "Losers quit when they fail. Winners fail until they succeed. – Robert T. Kiyosaki",
+  "Attitude is a little thing that makes a big difference. – Winston Churchill",
+  "The only thing we have to fear is fear itself. – Franklin D. Roosevelt",
+  "Well done is better than well said. – Benjamin Franklin",
+  "I think, therefore I am. – René Descartes",
+  "You must be the change you wish to see in the world. – Mahatma Gandhi",
+  "If you’re the smartest person in the room, you’re in the wrong room. – Unknown",
+  "Live, love, laugh, leave a legacy. – Stephen Covey",
+  "Have no fear of perfection. You'll never reach it. – Salvador Dali",
+  "It always seems impossible until it's done. – Nelson Mandela",
+  "The most wasted of days is one without laughter. – e.e. cummings",
+  "Live as if you were to die tomorrow… – Mahatma Gandhi", // duplicate, but okay
+  "In union there is strength. – Aesop",
+  "If you don’t like the road you're walking, start paving another one. – Dolly Parton",
+  "If something is important enough, even if the odds are stacked against you, you should still do it. – Elon Musk",
+  "I've missed more than 9,000 shots… that's why I succeed. – Michael Jordan",
+  "The greatest glory in living lies not in never falling, but in rising every time we fall. – Nelson Mandela",
+  "You must do the thing you think you cannot do. – Eleanor Roosevelt",
+  "Be yourself; everyone else is already taken. – Oscar Wilde",
+  "We are what we repeatedly do. Excellence, then, is not an act, but a habit. – Aristotle",
+  "You don't need to see the whole staircase… – Martin Luther King Jr.",
+  "I hated every minute of training… Don’t quit. Suffer now and live as a champion. – Muhammad Ali",
+  "You are never too old to set another goal… – C.S. Lewis",
+  "Believe that life is worth living… – William James",
+  "Your attitude, not your aptitude, will determine your altitude. – Zig Ziglar",
+  "Believe you can and you're halfway there. – Theodore Roosevelt",
+  "Success is going from failure to failure without losing enthusiasm. – Winston Churchill",
+  "Start from wherever you are and with whatever you've got. – Jim Rohn",
+  "What lies behind us and what lies before us are tiny matters compared to what lies within us. – Ralph Waldo Emerson",
+  "The price of success is hard work, dedication… and determination. – Vince Lombardi",
+  "Carpe diem. Seize the day, boys. Make your lives extraordinary. – Dead Poets Society",
+  "It's hard to beat a person who never gives up. – Babe Ruth",
+  "The secret of your future is hidden in your daily routine. – Mike Murdock",
+  "Don't stop when you are tired. Stop when you are done. – Unknown",
+  "Do something today that your future self will thank you for. – Unknown",
+  "Motivation may get you started, but habit keeps you going. – Miya Yamanouchi",
+  "If you build it, he will come. – Field of Dreams",
+  "There's no place like home. – The Wizard of Oz",
+  "I'll be back. – The Terminator",
+  "Show me the money! – Jerry Maguire",
+  "You're gonna need a bigger boat. – Jaws",
+  "May the Force be with you. – Star Wars",  
+  "Houston, we have a problem. – Apollo 13",
+  "Elementary, my dear Watson. – Sherlock Holmes",
+  "I feel the need—the need for speed! – Top Gun",
+  "Toto, I've a feeling we're not in Kansas anymore. – The Wizard of Oz",
+  "My mama always said life was like a box of chocolates… – Forrest Gump",
+  "Here's looking at you, kid. – Casablanca",
+  "Frankly, my dear, I don't give a damn. – Gone with the Wind",
+  "I'm walkin' here! I'm walkin' here! – Midnight Cowboy",
+  "Keep your friends close, but your enemies closer. – The Godfather",
+  "I'll have what she's having. – When Harry Met Sally",
+  "Open the pod bay doors, HAL. – 2001: A Space Odyssey",
+  "Say 'hello' to my little friend! – Scarface",
+  "Nobody puts Baby in a corner. – Dirty Dancing",
+  "I'm the king of the world! – Titanic",
+  "Yo, Adrian! – Rocky",
+  "Toga! Toga! – Animal House",
+  "Cinderella story... It's in the hole! – Caddyshack",
+  "Greed, for lack of a better word, is good. – Wall Street",
+  "One morning I shot an elephant in my pajamas… – Groucho Marx",
+  "Badges? We don't need no badges! – Blazing Saddles",
+  "Attica! Attica! – Dog Day Afternoon",
+  "We've always got Paris. – Casablanca",
+  "Plastics. – The Graduate",
+  "Why don't you come up sometime and see me? – She Done Him Wrong",
+  "A census taker once tried to test me… – Silence of the Lambs"
+];
+
+        const quoteElement = document.getElementById('quote');
+        const inputBox = document.getElementById('input-box');
+        const wpmElement = document.getElementById('wpm');
+        const accuracyElement = document.getElementById('accuracy');
+        const restartButton = document.getElementById('restart');
+
+        let startTime;
+        let timerStarted = false;
+        let currentQuote = "";
+
+        function loadNewQuote() {
+            currentQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteElement.innerText = currentQuote;
+            inputBox.value = "";
+            wpmElement.innerText = "WPM: 0";
+            accuracyElement.innerText = "Accuracy: 100%";
+            timerStarted = false;
+        }
+
+        function calculateWPM(text, timeTaken) {
+            const words = text.trim().split(/\s+/).length;
+            const wpm = (words / timeTaken) * 60;
+            return Math.round(wpm);
+        }
+
+        function calculateAccuracy(typed, actual) {
+            let correct = 0;
+            const minLength = Math.min(typed.length, actual.length);
+            for (let i = 0; i < minLength; i++) {
+                if (typed[i] === actual[i]) correct++;
+            }
+            return Math.round((correct / actual.length) * 100);
+        }
+
+        inputBox.addEventListener('input', () => {
+            if (!timerStarted) {
+                startTime = new Date();
+                timerStarted = true;
+            }
+
+            const typedText = inputBox.value;
+            const currentTime = new Date();
+            const timeElapsed = (currentTime - startTime) / 1000; // seconds
+
+            const wpm = calculateWPM(typedText, timeElapsed);
+            const accuracy = calculateAccuracy(typedText, currentQuote);
+
+            wpmElement.innerText = `WPM: ${wpm}`;
+            accuracyElement.innerText = `Accuracy: ${accuracy}%`;
+
+            if (typedText === currentQuote) {
+                alert(`🎉 Finished!\nYour WPM: ${wpm}\nAccuracy: ${accuracy}%`);
+            }
+        });
+
+        restartButton.addEventListener('click', loadNewQuote);
+
+        loadNewQuote();
+    </script>
+
+</body>
+</html>
